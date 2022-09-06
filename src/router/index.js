@@ -18,88 +18,88 @@ const importFile = file => require(`@/views/${file}.vue`).default
 
 const originalPush = VueRouter.prototype.push
 VueRouter.prototype.push = function push(location) {
-  return originalPush.call(this, location).catch(err => err)
+    return originalPush.call(this, location).catch(err => err)
 }
 
 Vue.use(VueRouter)
 
 export const constantRouterMap = [
-  {
-    path: "/404",
-    name: "404",
-    hidden: true,
-    component: Layout,
-    children: [
-      {
-        path: "",
+    {
+        path: "/404",
         name: "404",
-        component: importFile("exception/404")
-      }
-    ]
-  },
-  {
-    path: "/nopass",
-    name: "NoPass",
-    hidden: true,
-    component: Layout,
-    children: [
-      {
-        path: "",
+        hidden: true,
+        component: Layout,
+        children: [
+            {
+                path: "",
+                name: "404",
+                component: importFile("exception/404")
+            }
+        ]
+    },
+    {
+        path: "/nopass",
         name: "NoPass",
-        component: importFile("exception/nopass")
-      }
-    ]
-  },
-  {
-    path: "/",
-    redirect: "/dashboard/work",
-    hidden: true
-  },
-  // {
-  //   path: "/demo",
-  //   name: "Demo",
-  //   icon: "appstore",
-  //   component: Layout,
-  //   children: [
-  //     {
-  //       path: "",
-  //       component: importFile("demo/index"),
-  //       name: "Demo",
-  //       meta: { title: "Demo", icon: "index", affix: true, noCache: true }
-  //     }
-  //   ]
-  // },
-  {
-    path: "/login",
-    name: "Login",
-    hidden: true,
-    component: importFile("login")
-  },
-  {
-    path: "/reset",
-    name: "Reset",
-    hidden: true,
-    component: importFile("resetpwd")
-  },
-  {
-    path: "/trajectory1",
-    name: "Trajectory1",
-    hidden: true,
-    component: importFile("trajectory/trajectory1")
-  },
-  {
-    path: "/trajectory",
-    name: "Trajectory",
-    hidden: true,
-    component: importFile("trajectory/trajectory")
-  }
+        hidden: true,
+        component: Layout,
+        children: [
+            {
+                path: "",
+                name: "NoPass",
+                component: importFile("exception/nopass")
+            }
+        ]
+    },
+    {
+        path: "/",
+        redirect: "/dashboard/work",
+        hidden: true
+    },
+    // {
+    //   path: "/demo",
+    //   name: "Demo",
+    //   icon: "appstore",
+    //   component: Layout,
+    //   children: [
+    //     {
+    //       path: "",
+    //       component: importFile("demo/index"),
+    //       name: "Demo",
+    //       meta: { title: "Demo", icon: "index", affix: true, noCache: true }
+    //     }
+    //   ]
+    // },
+    {
+        path: "/login",
+        name: "Login",
+        hidden: true,
+        component: importFile("login")
+    },
+    {
+        path: "/reset",
+        name: "Reset",
+        hidden: true,
+        component: importFile("resetpwd")
+    },
+    {
+        path: "/trajectory1",
+        name: "Trajectory1",
+        hidden: true,
+        component: importFile("trajectory/trajectory1")
+    },
+    {
+        path: "/trajectory",
+        name: "Trajectory",
+        hidden: true,
+        component: importFile("trajectory/trajectory")
+    }
 ]
 
 const router = new VueRouter({
-  mode: "hash",
-  base: process.env.BASE_URL,
-  scrollBehavior: () => ({ y: 0 }),
-  routes: constantRouterMap
+    mode: "hash",
+    base: process.env.VUE_APP_API_URL,
+    scrollBehavior: () => ({y: 0}),
+    routes: constantRouterMap
 })
 
 export default router

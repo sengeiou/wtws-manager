@@ -1,27 +1,28 @@
-import request, { method } from "@/utils/request"
+import request, {method} from "@/utils/request"
 import _ from "lodash"
+import {DEFAULT_USER_TYPE} from "@/config";
 
 const api = {
-  Add: "user/insertUser",
-  Del: "user/updateUserIDsDelete",
-  Edit: "",
-  updateUser: "user/updateUser",
-  UpdateUserLoginName: "user/updateUserLoginName",
-  UpdateUserRoleAndArea: "user/updateUserRoleAndArea",
-  getStationList: "station/getStationList",
-  Get: "user/getUserInfo",
-  Reset: "user/resetPwd"
+    Add: "user/add",
+    Del: "user/",
+    Edit: "",
+    updateUser: "user/",
+    UpdateUserLoginName: "user/login-name",
+    UpdateUserRoleAndArea: "user/updateUserRoleAndArea",
+    getStationList: "station/list",
+    Get: "user/list",
+    Reset: "user/reset-pwd"
 }
 
 /**
  * @param {*} parameter
  */
 export function reset(id) {
-  return request({
-    url: api.Reset,
-    method: "post",
-    data: { userID: id }
-  })
+    return request({
+        url: api.Reset,
+        method: "post",
+        data: {userID: id}
+    })
 }
 
 /**
@@ -30,40 +31,40 @@ export function reset(id) {
  * @returns {*}
  */
 export function getStationList(parameter) {
-  return request({
-    url: api.getStationList,
-    method: "post",
-    data: parameter
-  })
+    return request({
+        url: api.getStationList,
+        method: "get",
+        data: parameter
+    })
 }
 
 /**
  * @param parameter
  * "userID": "",
-   "loginName": ""
+ "loginName": ""
  * @returns {*}
  */
 export function updateuserloginname(parameter) {
-  return request({
-    url: api.UpdateUserLoginName,
-    method: "post",
-    data: parameter
-  })
+    return request({
+        url: api.UpdateUserLoginName,
+        method: "put",
+        data: parameter
+    })
 }
 
 /**
  * @param parameter
  * "userID": "",
-   "workNo": "",
-   "displayName": ""
+ "workNo": "",
+ "displayName": ""
  * @returns {*}
  */
 export function updateuser(parameter) {
-  return request({
-    url: api.updateUser,
-    method: "post",
-    data: parameter
-  })
+    return request({
+        url: api.updateUser,
+        method: "put",
+        data: parameter
+    })
 }
 
 /**
@@ -71,11 +72,11 @@ export function updateuser(parameter) {
  * @returns {*}
  */
 export function updateuserorleandarea(parameter) {
-  return request({
-    url: api.UpdateUserRoleAndArea,
-    method: "post",
-    data: parameter
-  })
+    return request({
+        url: api.UpdateUserRoleAndArea,
+        method: "post",
+        data: parameter
+    })
 }
 
 /**
@@ -84,68 +85,88 @@ export function updateuserorleandarea(parameter) {
  * @returns {*}
  */
 export function add(parameter) {
-  parameter["phoneTel"] = String(parameter.loginName)
-  parameter["userRoleInfoList"] = [{ roleID: parameter.roleID }]
-  parameter["userStationInfoList"] = _.map(parameter.station, it => {
-    let itemArr = it.split("@")
-    return {
-      stationID: itemArr[0],
-      stationName: itemArr[1]
-    }
-  })
-  parameter["userLoginAuth"] = parameter["userLoginAuth1"].join(",")
+    parameter["userRoleInfoList"] = [{roleID: parameter.roleID}]
+    parameter["stations"] = _.map(parameter.station, it => {
+        let itemArr = it.split("@")
+        return {
+            stationID: parseInt(itemArr[0]),
+            stationName: itemArr[1]
+        }
+    })
 
-  return method(
-    process.env.VUE_APP_API_BASE_URL,
-    false
-  )({
-    url: api.Add,
-    method: "post",
-    data: parameter
-  })
+    // console.log(`parameter.birthDate : ${JSON.stringify(parameter.birthDate)}`)
+    // if (parameter.birthDate) {
+    //     parameter.birthDate = parameter.birthDate.getFullYear() + "-" + (parameter.birthDate.getMonth() + 1) + "-" + parameter.birthDate.getDate();
+    // }
+
+
+    return method(
+        process.env.VUE_APP_API_URL,
+        false
+    )({
+        url: api.Add,
+        method: "post",
+        data: {
+            workNo: parameter.workNo,
+            displayName: parameter.displayName,
+            loginName: parameter.loginName,
+            phoneTel: parameter.phoneTel,
+            tel: parameter.tel,
+            birthDate: parameter.birthDate,
+            gender: parseInt(parameter.gender),
+            jobTitle: parameter.jobTitle,
+            email: parameter.email,
+            roleID: parameter.roleID,
+            stations: parameter.stations,
+            user_type: DEFAULT_USER_TYPE,
+
+
+        }
+    })
 }
 
 /**
  * @param {*} parameter
  */
 export function del(ids) {
-  return method(
-    process.env.VUE_APP_API_BASE_URL,
-    false
-  )({
-    url: api.Del,
-    method: "post",
-    data: { userIDs: ids }
-  })
+    return method(
+        process.env.VUE_APP_API_URL,
+        false
+    )({
+        url: api.Del,
+        method: "delete",
+        data: {userIDs: ids}
+    })
 }
 
 /**
  * @param {*} parameter
  */
 export function edit(parameter) {
-  parameter["userRoleInfoList"] = [{ roleID: parameter.roleID }]
-  parameter["userStationInfoList"] = _.map(parameter.station, it => {
-    let itemArr = it.split("@")
-    return {
-      stationID: itemArr[0],
-      stationName: itemArr[1]
-    }
-  })
+    parameter["userRoleInfoList"] = [{roleID: parameter.roleID}]
+    parameter["userStationInfoList"] = _.map(parameter.station, it => {
+        let itemArr = it.split("@")
+        return {
+            stationID: itemArr[0],
+            stationName: itemArr[1]
+        }
+    })
 
-  return request({
-    url: api.Edit,
-    method: "post",
-    data: parameter
-  })
+    return request({
+        url: api.Edit,
+        method: "post",
+        data: parameter
+    })
 }
 
 export default {
-  getStationList,
-  add,
-  del,
-  edit,
-  updateuserloginname,
-  updateuser,
-  updateuserorleandarea,
-  reset
+    api,
+    getStationList,
+    add,
+    del,
+    edit,
+    updateuserloginname,
+    updateuser,
+    updateuserorleandarea,
+    reset
 }

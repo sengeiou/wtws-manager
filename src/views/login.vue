@@ -2,51 +2,54 @@
   <div class="login">
     <div class="_box">
       <div class="_left">
-        <img src="~@/assets/image/login-box-left.png" alt="" srcset="" />
+        <img alt="" src="~@/assets/image/login-box-left.png" srcset=""/>
       </div>
       <div class="_right">
         <div class="_top">
-          <img src="~@/assets/image/logo.png" class="_l" alt="" srcset="" />
+          <img alt="" class="_l" src="~@/assets/image/logo.png" srcset=""/>
           <div class="_r">后台管理系统</div>
         </div>
         <div class="_title">账户密码登录</div>
         <a-form-model
-          ref="ruleForm"
-          class="login-form"
-          :model="form"
-          :rules="rules"
+            ref="ruleForm"
+            :model="form"
+            :rules="rules"
+            class="login-form"
         >
           <a-form-model-item ref="username" prop="username">
             <a-input
-              placeholder="用户名/手机号"
-              v-model="form.username"
-              @keyup.enter="onSubmit"
-              @blur="
+                v-model="form.username"
+                allow-clear
+                placeholder="用户名/手机号"
+                @blur="
                 () => {
                   $refs.username.onFieldBlur()
                 }
               "
-              allow-clear
+                @keyup.enter="onSubmit"
             >
-              <a-icon slot="prefix" type="user" />
+              <a-icon slot="prefix" type="user"/>
             </a-input>
           </a-form-model-item>
           <a-form-model-item ref="password" prop="password">
             <a-input
-              placeholder="密码"
-              type="password"
-              v-model="form.password"
-              @keyup.enter="onSubmit"
-              @blur="
+                v-model="form.password"
+                allow-clear
+                placeholder="密码"
+                type="password"
+                @blur="
                 () => {
                   $refs.password.onFieldBlur()
                 }
               "
-              allow-clear
+                @keyup.enter="onSubmit"
             >
-              <a-icon slot="prefix" type="lock" />
+              <a-icon slot="prefix" type="lock"/>
             </a-input>
           </a-form-model-item>
+
+          <!--          <SIdentify></SIdentify>-->
+
           <a-form-model-item class="remember" prop="remember">
             <a-checkbox-group v-model="form.remember">
               <a-checkbox :value="true" name="true">
@@ -56,10 +59,10 @@
           </a-form-model-item>
           <a-form-model-item class="loginwrapper">
             <a-button
-              :loading="loading"
-              class="login-btn"
-              type="primary"
-              @click="onSubmit"
+                :loading="loading"
+                class="login-btn"
+                type="primary"
+                @click="onSubmit"
             >
               <span v-if="!loading">登 录</span>
               <span v-else>登 录 中...</span>
@@ -74,6 +77,7 @@
 // import SIdentify from "@/components/Identify/index.vue"
 import storage from "store"
 import md5 from "js-md5" // 使用md5加密密码
+import {defaultPassWord} from "@/config"
 
 export default {
   // components: { SIdentify },
@@ -89,7 +93,7 @@ export default {
     //   }
     // }
     return {
-      // identifycode: "", // 图形验证码
+      identifycode: "", // 图形验证码
       // identifycodes: "1234567890",
       redirect: undefined,
       form: {
@@ -113,7 +117,7 @@ export default {
             message: "请输入密码",
             trigger: "blur"
           }
-        ]
+        ],
         // imgCaptcha: [
         //   {
         //     required: true,
@@ -132,7 +136,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
       },
       immediate: true
@@ -155,11 +159,11 @@ export default {
         username: username === undefined ? this.form.username : username,
         password: password,
         remember:
-          remember === undefined
-            ? []
-            : Boolean(remember) === false
-            ? []
-            : [Boolean(remember)]
+            remember === undefined
+                ? []
+                : Boolean(remember) === false
+                    ? []
+                    : [Boolean(remember)]
       }
     },
     // 登录
@@ -171,7 +175,7 @@ export default {
           password: this.form.password,
           remember: this.form.remember
         }
-        user.password = md5(user.password)
+        user.password = md5(md5(user.password) + "wtws")
         if (valid) {
           this.loading = true
 
@@ -179,8 +183,8 @@ export default {
             storage.set("username", user.username)
             storage.set("password", this.form.password)
             storage.set(
-              "remember",
-              user.remember[0] === undefined ? false : true
+                "remember",
+                user.remember[0] === undefined ? false : true
             )
           } else {
             storage.remove("username")
@@ -188,35 +192,33 @@ export default {
             storage.remove("remember")
           }
           this.$store
-            .dispatch("Login", user)
-            .then(res => {
-              // this.$store.dispatch("GetInfo").then(res1 => {
-              //   this.loading = false
-              //   if (res1.code === 0) {
-              if (res.code === 200) {
-                this.$message.success("登陆成功！")
-                console.log(this.form.password === "123456")
-                if (this.form.password === "123456") {
-                  this.$store.commit("SET_FIRST")
-                  this.$router.push({
-                    name: "Reset",
-                    query: { account: this.form.username }
-                  })
-                } else {
-                  this.$router.push({ path: this.redirect || "/" })
+              .dispatch("Login", user)
+              .then(res => {
+                console.log(`login dispatch res:${JSON.stringify(res)}`)
+                if (res.code === 0) {
+                  this.$message.success("登陆成功！")
+                  console.log(`this.form.password : ${this.form.password}`)
+                  if (this.form.password === defaultPassWord) {
+                    this.$store.commit("SET_FIRST")
+                    this.$router.push({
+                      name: "Reset",
+                      query: {account: this.form.username}
+                    })
+                  } else {
+                    this.$router.push({path: "/dashboard/work" || "/"})
+                  }
                 }
-              }
-              //   }
-              // })
-            })
-            .catch(() => {
-              this.loading = false
-            })
+                //   }
+                // })
+              })
+              .catch(() => {
+                this.loading = false
+              })
         } else {
           return false
         }
       })
-    }
+    },
     // // 生成随机数
     // randomNum(min, max) {
     //   return Math.floor(Math.random() * (max - min) + min)
@@ -247,6 +249,7 @@ export default {
   background: url("~@/assets/image/background.png") no-repeat 50%;
   background-size: cover;
   box-sizing: border-box;
+
   ._box {
     width: 1022px;
     height: 549px;
@@ -255,6 +258,7 @@ export default {
     margin: 0 auto;
     display: flex;
     align-items: center;
+
     ._left {
       img {
         display: block;
@@ -264,18 +268,22 @@ export default {
         margin-right: 97px;
       }
     }
+
     ._right {
       flex: 1;
+
       ._top {
         display: flex;
         align-items: center;
         margin-bottom: 50px;
+
         ._l {
           margin-right: 70px;
           display: block;
-          width: 136px;
-          height: 43px;
+          width: 100px;
+          height: 100px;
         }
+
         ._r {
           font-size: 24px;
           font-family: PingFangSC, PingFangSC-Regular;
@@ -283,6 +291,7 @@ export default {
           text-align: left;
           color: #0b7ef8;
           position: relative;
+
           &::before {
             content: "";
             display: block;
@@ -296,6 +305,7 @@ export default {
           }
         }
       }
+
       ._title {
         font-size: 16px;
         font-family: PingFangSC, PingFangSC-Regular;
@@ -304,16 +314,19 @@ export default {
         color: #1890ff;
         margin-bottom: 19px;
       }
+
       .login-form {
         border-radius: 6px;
         // background: #fff;
         width: 385px;
+
         ._title {
           margin: 0 auto 30px auto;
           text-align: center;
           color: #707070;
           font-weight: bold;
         }
+
         /deep/ .ant-input {
           height: 42px;
           line-height: 41px;
@@ -321,25 +334,31 @@ export default {
           border-left: none;
           border-right: none;
           border-radius: 0;
+
           &:focus {
             outline: none;
             box-shadow: none;
           }
         }
+
         /deep/ .ant-input-prefix,
         /deep/ .ant-checkbox-wrapper {
           color: #c0c0c0;
         }
+
         /deep/ .ant-input-affix-wrapper .ant-input:not(:first-child) {
           padding-left: 37px;
         }
+
         /deep/ .ant-form-item {
           &.remember {
             margin-bottom: 20px;
+
             &.ant-form-item-with-help {
               margin-bottom: 0;
             }
           }
+
           .login-btn {
             // width: 100%;
             // height: 38px;
@@ -355,6 +374,7 @@ export default {
             font-family: PingFangSC, PingFangSC-Medium;
             font-weight: 500;
           }
+
           &.loginwrapper {
             .ant-form-item-control-wrapper {
               display: flex;

@@ -12,7 +12,7 @@ const Api = {
   batchAddVehicle: "vehicle/batchAddVehicle"
 }
 
-let url = process.env.VUE_APP_API_MANAGE_URL
+let url = process.env.VUE_APP_API_URL
 
 const batchAddVehicleExcel = parameter => {
   return method(

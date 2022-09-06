@@ -1,94 +1,96 @@
-import { constantRouterMap } from "@/router/index"
+import {constantRouterMap} from "@/router/index"
 import _ from "lodash"
 
 const permission = {
-  state: {
-    routers: constantRouterMap,
-    addRouters: [],
-    // 第一次加载菜单时用到
-    loadMenus: false
-  },
-  mutations: {
-    SET_ROUTERS: (state, routers) => {
-      state.addRouters = routers
-      state.routers = constantRouterMap.concat(routers)
+    state: {
+        routers: constantRouterMap,
+        addRouters: [],
+        // 第一次加载菜单时用到
+        loadMenus: false
     },
-    SET_LOAD_MENUS: (state, loadMenus) => {
-      state.loadMenus = loadMenus
-    }
-  },
-  actions: {
-    GenerateRoutes({ commit }, asyncRouter) {
-      commit("SET_ROUTERS", asyncRouter)
+    mutations: {
+        SET_ROUTERS: (state, routers) => {
+            state.addRouters = routers
+            state.routers = constantRouterMap.concat(routers)
+        },
+        SET_LOAD_MENUS: (state, loadMenus) => {
+            state.loadMenus = loadMenus
+        }
     },
-    updateLoadMenus({ commit }) {
-      return new Promise(() => {
-        commit("SET_LOAD_MENUS", true)
-      })
+    actions: {
+        GenerateRoutes({commit}, asyncRouter) {
+            commit("SET_ROUTERS", asyncRouter)
+        },
+        updateLoadMenus({commit}) {
+            return new Promise(() => {
+                commit("SET_LOAD_MENUS", true)
+            })
+        }
     }
-  }
 }
 
 export const filterAsyncRouter = (routers, prefix = "") => {
-  if (routers) {
-    return routers.map(function(item) {
-      if (item.functionType === "2" && item.parentFunctionCode === "0") {
-        return false
-      } else {
-        let codes = []
-        let children = []
-        item.children = item.children === null ? [] : item.children
+    if (routers) {
+        return routers.map(function (item) {
+            if (item.functionType === 2 && item.parentFunctionCode === 0) {
+                return false
+            } else {
+                let codes = []
+                let children = []
+                item.children = item.children === null ? [] : item.children
 
-        for (let i = 0; i < item.children.length; i++) {
-          if (item.children[i].functionType === "2") {
-            codes.push(item.children[i].functionName)
-          } else {
-            children.push(item.children[i])
-          }
-        }
-        let route = {
-          path: _.trim("/" + (prefix === "" ? "" : `${prefix}/`) + item.path),
-          icon: item.functionIcon,
-          name: item.functionName,
-          functionType: item.functionType,
-          meta: {
-            code: codes
-          }
-        }
+                for (let i = 0; i < item.children.length; i++) {
+                    if (item.children[i].functionType === 2) {
+                        codes.push(item.children[i].functionName)
+                    } else {
+                        children.push(item.children[i])
+                    }
+                }
 
-        if (!isMenu(item.children)) {
-          route["children"] = filterAsyncRouter(
-            item.children,
-            _.trim(item.path)
-          )
-        }
+                let route = {
+                    path: _.trim("/" + (prefix === "" ? "" : `${prefix}/`) + item.path),
+                    icon: item.functionIcon,
+                    name: item.functionName,
+                    functionType: item.functionType,
+                    meta: {
+                        code: codes
+                    }
+                }
 
-        route["component"] =
-          item.parentFunctionCode === "0"
-            ? Layout()
-            : !isMenu(item.children)
-            ? RouterView()
-            : loadView((prefix === "" ? "" : `${prefix}/`) + _.trim(item.path))
+                if (!isMenu(item.children)) {
+                    route["children"] = filterAsyncRouter(
+                        item.children,
+                        _.trim(item.path)
+                    )
+                }
 
-        if (item.parentFunctionCode === "0" && isMenu(item.children)) {
-          route["children"] = [
-            {
-              path: "",
-              name: item.path + "/index",
-              component: loadView(
-                (prefix === "" ? "" : `${prefix}/`) + _.trim(item.path)
-              ),
-              meta: {
-                code: codes
-              }
+                route["component"] =
+                    item.parentFunctionCode === 0
+                        ? Layout()
+                        : !isMenu(item.children)
+                            ? RouterView()
+                            : loadView((prefix === "" ? "" : `${prefix}/`) + _.trim(item.path))
+
+
+                if (item.parentFunctionCode === 0 && isMenu(item.children)) {
+                    route["children"] = [
+                        {
+                            path: "",
+                            name: item.path + "/index",
+                            component: loadView(
+                                (prefix === "" ? "" : `${prefix}/`) + _.trim(item.path)
+                            ),
+                            meta: {
+                                code: codes
+                            }
+                        }
+                    ]
+                }
+
+                return route
             }
-          ]
-        }
-
-        return route
-      }
-    })
-  }
+        })
+    }
 }
 
 /**
@@ -96,23 +98,23 @@ export const filterAsyncRouter = (routers, prefix = "") => {
  * @param {*} routers
  */
 const isMenu = routers => {
-  return (
-    routers.filter(item => {
-      return item.functionType === "1"
-    }).length === 0
-  )
+    return (
+        routers.filter(item => {
+            return item.functionType === 1
+        }).length === 0
+    )
 }
 
 export const loadView = view => {
-  return resolve => require([`@/views/${view}`], resolve)
+    return resolve => require([`@/views/${view}`], resolve)
 }
 
 const Layout = () => {
-  return resolve => require([`@/layout/index`], resolve)
+    return resolve => require([`@/layout/index`], resolve)
 }
 
 const RouterView = () => {
-  return resolve => require([`@/layout/routerview`], resolve)
+    return resolve => require([`@/layout/routerview`], resolve)
 }
 
 export default permission

@@ -5,43 +5,43 @@
         <a-row :gutter="48">
           <a-col :md="8" :sm="24">
             <a-form-item label="服务站">
-              <a-input v-model="crud.query.name" style="width: 100%" />
+              <a-input v-model="crud.query.name" style="width: 100%"/>
             </a-form-item>
           </a-col>
           <a-col :md="8" :sm="24">
             <a-form-item label="联系人">
-              <a-input v-model="crud.query.contactPerson" style="width: 100%" />
+              <a-input v-model="crud.query.contactPerson" style="width: 100%"/>
             </a-form-item>
           </a-col>
           <template v-if="crud.advanced">
             <a-col :md="8" :sm="24">
               <a-form-item label="地址">
-                <a-input v-model="crud.query.address" style="width: 100%" />
+                <a-input v-model="crud.query.address" style="width: 100%"/>
               </a-form-item>
             </a-col>
           </template>
-          <SearchOptions />
+          <SearchOptions/>
         </a-row>
       </a-form>
     </div>
     <div class="table-container">
-      <Operations tableName="服务站信息列表" />
+      <Operations tableName="服务站信息列表"/>
       <a-spin :spinning="crud.loading">
         <a-table
-          :row-selection="{
+            :columns="crud.columns"
+            :data-source="crud.data"
+            :pagination="false"
+            :row-selection="{
             selectedRowKeys: crud.selections,
             onChange: crud.selectionChangeHandler
           }"
-          rowKey="stationID"
-          :columns="crud.columns"
-          :data-source="crud.data"
-          :pagination="false"
+            rowKey="stationID"
         >
           <template slot="operation" slot-scope="record">
             <a-button
-              type="link"
-              :disabled="!$route.meta.code.includes('获取服务站详情')"
-              @click="crud.toInfo(record)"
+                :disabled="!$route.meta.code.includes('获取服务站详情')"
+                type="link"
+                @click="crud.toInfo(record)"
             >
               详情
             </a-button>
@@ -52,120 +52,121 @@
           </template>
         </a-table>
       </a-spin>
-      <Pagination />
+      <Pagination/>
     </div>
     <map-drag
-      :type="showType"
-      :mapVisible.sync="mapVisible"
-      @getLocation="getLocation"
-      :lng.sync="lng"
-      :lat.sync="lat"
+        :lat.sync="lat"
+        :lng.sync="lng"
+        :mapVisible.sync="mapVisible"
+        :type="showType"
+        @getLocation="getLocation"
     ></map-drag>
     <!-- 填写表单部分 -->
     <div class="form-container">
       <a-modal
-        wrapClassName="stationListDialog"
-        :visible="crud.status.cu > 0 || crud.status.in > 0"
-        @cancel="crud.cancelCU()"
-        :title="crud.status.title"
+          :title="crud.status.title"
+          :visible="crud.status.cu > 0 || crud.status.in > 0"
+          wrapClassName="stationListDialog"
+          @cancel="crud.cancelCU()"
       >
         <a-form-model
-          ref="form"
-          labelAlign="left"
-          :class="
+            ref="form"
+            :class="
             crud.status.in > 0 && crud.status.cu === 0 ? 'disabled-form' : ''
           "
-          :model="form"
-          :label-col="{ span: 6 }"
-          :wrapper-col="{ span: 18 }"
-          :rules="rules"
+            :label-col="{ span: 6 }"
+            :model="form"
+            :rules="rules"
+            :wrapper-col="{ span: 18 }"
+            labelAlign="left"
         >
           <a-form-model-item label="服务站名称" prop="name">
             <a-input
-              :disabled="crud.status.in > 0 && crud.status.cu === 0"
-              v-model="form.name"
+                v-model="form.name"
+                :disabled="crud.status.in > 0 && crud.status.cu === 0"
             />
           </a-form-model-item>
           <a-form-model-item label="联系人" prop="contactPerson">
             <a-input
-              :disabled="crud.status.in > 0 && crud.status.cu === 0"
-              v-model="form.contactPerson"
+                v-model="form.contactPerson"
+                :disabled="crud.status.in > 0 && crud.status.cu === 0"
             />
           </a-form-model-item>
           <a-form-model-item label="联系电话" prop="contactPhone">
             <a-input
-              :disabled="crud.status.in > 0 && crud.status.cu === 0"
-              v-model="form.contactPhone"
+                v-model="form.contactPhone"
+                :disabled="crud.status.in > 0 && crud.status.cu === 0"
             />
           </a-form-model-item>
           <a-form-model-item
-            class="address-form-model-item"
-            label="详细地址"
-            prop="address"
+              class="address-form-model-item"
+              label="详细地址"
+              prop="address"
           >
-            <a-input :disabled="true" v-model="form.address" />
+            <a-input v-model="form.address" :disabled="true"/>
             <a-button
-              v-if="crud.status.cu > 0"
-              @click="showMap({}, 'choose')"
-              type="primary"
-              >选择地址</a-button
+                v-if="crud.status.cu > 0"
+                type="primary"
+                @click="showMap({}, 'choose')"
+            >选择地址
+            </a-button
             >
           </a-form-model-item>
         </a-form-model>
         <template slot="footer">
           <div v-if="crud.status.cu > 0">
             <a-button
-              v-if="crud.status.add > 0"
-              key="back"
-              @click="crud.resetForm()"
+                v-if="crud.status.add > 0"
+                key="back"
+                @click="crud.resetForm()"
             >
               重置
             </a-button>
             <a-button
-              v-if="crud.status.edit > 0"
-              key="back"
-              @click="crud.cancelCU('uptoinfo')"
+                v-if="crud.status.edit > 0"
+                key="back"
+                @click="crud.cancelCU('uptoinfo')"
             >
               取消
             </a-button>
             <a-button
-              v-if="crud.status.add > 0"
-              key="submit"
-              type="primary"
-              @click="crud.submitCU()"
+                v-if="crud.status.add > 0"
+                key="submit"
+                type="primary"
+                @click="crud.submitCU()"
             >
               提交
             </a-button>
             <a-button
-              v-if="crud.status.edit > 0"
-              key="submit"
-              type="primary"
-              @click="crud.submitCU()"
+                v-if="crud.status.edit > 0"
+                key="submit"
+                type="primary"
+                @click="crud.submitCU()"
             >
               保存
             </a-button>
           </div>
           <div v-if="crud.status.in > 0 && crud.status.cu === 0">
             <a-button
-              key="back"
-              :disabled="!crud.permission.edit"
-              @click="crud.toEdit()"
+                key="back"
+                :disabled="!crud.permission.edit"
+                @click="crud.toEdit()"
             >
               修改
             </a-button>
             <a-popconfirm
-              placement="topRight"
-              ok-text="删除"
-              cancel-text="取消"
-              @confirm="crud.doDelete(null, 'close')"
+                cancel-text="取消"
+                ok-text="删除"
+                placement="topRight"
+                @confirm="crud.doDelete(null, 'close')"
             >
               <template slot="title">
                 你确定要删除吗？
               </template>
               <a-button
-                key="submit"
-                :disabled="!crud.permission.del"
-                type="danger"
+                  key="submit"
+                  :disabled="!crud.permission.del"
+                  type="danger"
               >
                 删除
               </a-button>
@@ -181,7 +182,7 @@
 import SearchOptions from "@/components/Crud/SearchOptions"
 import Operations from "@/components/Crud/Operations"
 import Pagination from "@/components/Crud/Pagination"
-import CRUD, { presenter, header, form } from "@crud/crud"
+import CRUD, {form, header, presenter} from "@crud/crud"
 import mapDrag from "@/components/MapDrag"
 import listApi from "@/api/station/list"
 
@@ -202,7 +203,7 @@ export default {
   mixins: [presenter(), header(), form(defaultForm)],
   cruds() {
     return CRUD({
-      url: "/station/getStationList",
+      url: "/station/list",
       title: "服务站",
       columns: [
         {
@@ -223,10 +224,10 @@ export default {
         },
         {
           title: "操作",
-          scopedSlots: { customRender: "operation" }
+          scopedSlots: {customRender: "operation"}
         }
       ],
-      crudMethod: { ...listApi },
+      crudMethod: {...listApi},
       idField: "stationID" // 设置每一条记录的唯一标失
     })
   },
@@ -286,25 +287,25 @@ export default {
       lat: "",
       showType: "info",
       rules: {
-        name: [{ required: true, validator: checkName, trigger: "blur" }],
+        name: [{required: true, validator: checkName, trigger: "blur"}],
         contactPerson: [
-          { required: true, validator: checkContactPerson, trigger: "blur" }
+          {required: true, validator: checkContactPerson, trigger: "blur"}
         ],
         contactPhone: [
-          { required: true, validator: checkContactPhone, trigger: "blur" }
+          {required: true, validator: checkContactPhone, trigger: "blur"}
         ],
         address: [
-          { required: true, message: "请选择服务站地址", trigger: "blur" }
+          {required: true, message: "请选择服务站地址", trigger: "blur"}
         ]
       }
     }
   },
-  components: { SearchOptions, Operations, Pagination, mapDrag },
+  components: {SearchOptions, Operations, Pagination, mapDrag},
   created() {
     /**
      * 设置按钮权限
      */
-    let { code } = this.$route.meta
+    let {code} = this.$route.meta
 
     // 关闭下载功能
     this.crud.optShow.download = false

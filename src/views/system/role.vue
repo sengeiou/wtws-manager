@@ -4,10 +4,10 @@
       <div class="_left">
         <div class="_top">
           <a-menu
-            style="width: 250px"
-            :selected-keys="roleSelect"
-            mode="inline"
-            @click="handleClick"
+              :selected-keys="roleSelect"
+              mode="inline"
+              style="width: 250px"
+              @click="handleClick"
           >
             <a-menu-item v-for="item in roleList" :key="item.roleID">
               {{ item.roleName }}
@@ -16,18 +16,18 @@
         </div>
         <div class="_bottom">
           <a-button
-            :disabled="!hasAdd"
-            @click="visible = true"
-            type="primary"
-            class="_create"
+              :disabled="!hasAdd"
+              class="_create"
+              type="primary"
+              @click="visible = true"
           >
             创建
           </a-button>
           <a-button
-            :disabled="!hasDel || roleSelect[0] === AdminRoleID"
-            @click="DEL"
-            type="danger"
-            class="_del"
+              :disabled="!hasDel || roleSelect[0] == AdminRoleID"
+              class="_del"
+              type="danger"
+              @click="DEL"
           >
             删除
           </a-button>
@@ -38,20 +38,20 @@
           <div class="_label">功能权限：</div>
           <div class="_group function-check">
             <a-tree
-              v-model="functionSelect"
-              @check="functionSelectCheck"
-              checkable
-              :auto-expand-parent="autoExpandParent"
-              :tree-data="resolvePermissionList"
+                v-model="functionSelect"
+                :auto-expand-parent="autoExpandParent"
+                :tree-data="resolvePermissionList"
+                checkable
+                @check="functionSelectCheck"
             />
           </div>
         </div>
         <div class="_bottom">
           <a-button
-            :disabled="!hasUpdate || roleSelect[0] === AdminRoleID"
-            @click="updatePermission"
-            type="primary"
-            class="_update"
+              :disabled="!hasUpdate || roleSelect[0] === AdminRoleID"
+              class="_update"
+              type="primary"
+              @click="updatePermission"
           >
             {{ notUpdate ? "修改" : "保存" }}
           </a-button>
@@ -61,23 +61,23 @@
 
     <!-- 新增角色 -->
     <a-modal
-      title="新增角色"
-      :visible="visible"
-      :confirm-loading="confirmLoading"
-      @ok="handleOk"
-      class="role_modal"
-      @cancel="handleCancel"
+        :confirm-loading="confirmLoading"
+        :visible="visible"
+        class="role_modal"
+        title="新增角色"
+        @cancel="handleCancel"
+        @ok="handleOk"
     >
       <a-form-model
-        ref="form"
-        :model="form"
-        :label-col="{ span: 5 }"
-        labelAlign="left"
-        :wrapper-col="{ span: 19 }"
-        :rules="rules"
+          ref="form"
+          :label-col="{ span: 5 }"
+          :model="form"
+          :rules="rules"
+          :wrapper-col="{ span: 19 }"
+          labelAlign="left"
       >
         <a-form-model-item label="角色名称" prop="roleName">
-          <a-input v-model="form.roleName" />
+          <a-input v-model="form.roleName"/>
         </a-form-model-item>
       </a-form-model>
       <div class="_content">
@@ -85,11 +85,11 @@
           <div class="_label">功能权限：</div>
           <div class="_group function-check">
             <a-tree
-              v-model="addFunctionSelect"
-              @check="addFunctionSelectCheck"
-              checkable
-              :auto-expand-parent="autoExpandParent"
-              :tree-data="addResolvePermissionList"
+                v-model="addFunctionSelect"
+                :auto-expand-parent="autoExpandParent"
+                :tree-data="addResolvePermissionList"
+                checkable
+                @check="addFunctionSelectCheck"
             />
           </div>
         </div>
@@ -101,11 +101,12 @@
 /**
  * 获取角色列表
  */
-import { find, add, edit, del } from "@/api/system/role"
+import {add, del, edit, find} from "@/api/system/role"
 /**
  * 获取权限列表
  */
-import { getrole } from "@/api/system/menu"
+import {getrole} from "@/api/system/menu"
+import {ADMIN_ROLE_ID, GET_ROLE_PROMISSION_FUN, GET_ROLE_PROMISSION_TYPE} from "@/config";
 // import _ from "lodash"
 
 export default {
@@ -144,12 +145,12 @@ export default {
       confirmLoading: false,
 
       form: {
-        roleID: "",
+        roleType: 1,
         roleName: ""
       },
       rules: {
         roleName: [
-          { required: true, validator: validateRoleName, trigger: "blur" }
+          {required: true, validator: validateRoleName, trigger: "blur"}
         ]
       },
 
@@ -160,7 +161,8 @@ export default {
     }
   },
   created() {
-    if (this.$route.meta.code.includes("修改角色权限")) {
+    console.log(`this.$route.meta.code : ${JSON.stringify(this.$route.meta.code)}`)
+    if (this.$route.meta.code.includes("修改角色功能")) {
       this.hasUpdate = true
     }
     if (this.$route.meta.code.includes("新增角色")) {
@@ -172,7 +174,7 @@ export default {
     if (this.$route.meta.code.includes("获取角色列表")) {
       this.hasList = true
       this.initData()
-      this.getRolePermission("all")
+      this.getRolePermission(GET_ROLE_PROMISSION_TYPE.ALL)
     }
   },
   watch: {
@@ -188,11 +190,12 @@ export default {
       },
       deep: true
     },
-    visible: {
+    visible: {    //监听表单隐现
       handler(newVal) {
-        if (newVal) {
-          this.getRolePermission("all", "add")
-        } else {
+        console.log(`newVal : ${newVal}`)
+        if (newVal) { //显示表单
+          this.getRolePermission(GET_ROLE_PROMISSION_TYPE.ALL, GET_ROLE_PROMISSION_FUN.ADD)
+        } else {//隐藏表单
           this.form.roleName = ""
           this.addPermissionList = []
           this.addResolvePermissionList = []
@@ -202,15 +205,18 @@ export default {
     }
   },
   methods: {
+    //初始化数据
     initData() {
       this.spinning = true
+      //查找用户列表
       find({}).then(res => {
         this.spinning = false
         if (res.code === 0) {
           this.roleList = res.result
-          this.roleSelect = [this.roleList[0].roleID]
+          this.roleSelect = [this.roleList[0].roleID]   //默认选中第一个角色
+          //获取admin role id
           this.AdminRoleID = this.roleList.filter(item => {
-            return item.roleName === "系统管理员"
+            return item.roleID === ADMIN_ROLE_ID
           })[0].roleID
         }
       })
@@ -224,50 +230,57 @@ export default {
         this.EDIT()
       }
     },
+
+    //表单确认
     handleOk() {
       this.confirmLoading = true
       this.$refs.form.validate(valid => {
+        console.log(`valid:${JSON.stringify(valid)}`)
         if (valid) {
           this.ADD()
-            .then(res => {
-              if (res.code === 12) {
-                this.EDIT(res.result, "add")
-                  .then(() => {
-                    setTimeout(() => {
-                      this.visible = false
-                      this.confirmLoading = false
-                    }, 2000)
-                  })
-                  .catch(() => {
-                    this.confirmLoading = false
-                  })
-              } else {
-                this.confirmLoading = false
-              }
-            })
-            .catch(() => {
-              setTimeout(() => {
-                this.visible = false
-                this.confirmLoading = false
-              }, 2000)
-            })
+              .then(res => {
+                if (res.code === 12) {
+                  this.EDIT(res.result.roleID, "add")
+                      .then(() => {
+                        setTimeout(() => {
+                          this.visible = false
+                          this.confirmLoading = false
+                        }, 2000)
+                      })
+                      .catch(() => {
+                        this.confirmLoading = false
+                      })
+                } else {
+                  this.confirmLoading = false
+                }
+              })
+              .catch(() => {
+                setTimeout(() => {
+                  this.visible = false
+                  this.confirmLoading = false
+                }, 2000)
+              })
         } else {
           this.confirmLoading = false
         }
       })
     },
+
+    //取消便捷表格
     handleCancel() {
       this.visible = false
     },
+
+    //添加权限
     ADD() {
       return new Promise((resolve, reject) => {
         add(this.form)
-          .then(res => {
-            resolve(res)
-          })
-          .catch(() => {
-            reject()
-          })
+            .then(res => {
+              resolve(res)
+            })
+            .catch(() => {
+              reject()
+            })
       })
     },
     EDIT(role_id = "", type = "update") {
@@ -287,23 +300,23 @@ export default {
             functionID: element
           })
         }
-        edit({ roleFunctionList: params })
-          .then(editR => {
-            if (editR.code === 0) {
-              if (type === "add") {
-                this.$message.success("新增成功")
+        edit({roleFunctionList: params})
+            .then(editR => {
+              if (editR.code === 0) {
+                if (type === "add") {
+                  this.$message.success("新增成功")
+                } else {
+                  this.$message.success("修改成功")
+                }
+                this.initData()
+                resolve(editR)
               } else {
-                this.$message.success("修改成功")
+                reject()
               }
-              this.initData()
-              resolve(editR)
-            } else {
+            })
+            .catch(() => {
               reject()
-            }
-          })
-          .catch(() => {
-            reject()
-          })
+            })
       })
     },
     DEL() {
@@ -312,87 +325,85 @@ export default {
         title: "确认删除该角色?",
         content: `请确认目前没有用户正在使用该角色，否则无法删除`,
         onOk() {
-          del({ roleID: _this.roleSelect[0] }).then(res => {
+          del({roleID: _this.roleSelect[0]}).then(res => {
             if (res.code === 16) {
               _this.$message.success("删除成功！该角色已从系统中删除。")
               _this.initData()
             }
           })
         },
-        onCancel() {}
+        onCancel() {
+        }
       })
     },
     /**
+     * 显示表单时，查询权限功能
      * type = "all" 查全部  type = "single" 需要传role_id
-     * fun = "find" 是角色修改  fun = "add" 是新增角色时用到
+     * fun = "list" 是角色修改  fun = "add" 是新增角色时用到
      */
-    getRolePermission(type = "single", fun = "find") {
+    getRolePermission(type = GET_ROLE_PROMISSION_TYPE.SINGLE, fun = GET_ROLE_PROMISSION_FUN.LIST) {
       this.spinning = true
 
-      let role_id = type === "all" ? "" : this.roleSelect[0]
-      getrole(role_id)
-        .then(res => {
-          this.spinning = false
-          if (res.code === 0) {
-            if (type === "all") {
-              if (fun === "find") {
-                this.permissionList = res.result.filter(item => {
-                  return item.systemCode !== "login"
-                })
-                this.PPpermissionList = this.jsonToArray(
-                  JSON.parse(JSON.stringify(this.permissionList))
-                )
-                this.$nextTick(() => {
-                  this.resolvePermissionList = this.resolvePermission(
-                    this.permissionList
+      let role_id = type === GET_ROLE_PROMISSION_TYPE.ALL ? 1 : this.roleSelect[0]
+      getrole({roleId: role_id})
+          .then(res => {
+            this.spinning = false
+            if (res.code === 0) {
+              if (type === GET_ROLE_PROMISSION_TYPE.ALL) {
+                if (fun === GET_ROLE_PROMISSION_FUN.LIST) {
+                  // this.permissionList = res.result.filter(item => {
+                  //   return item.systemCode !== "login"
+                  // })
+                  this.permissionList = res.result
+                  this.PPpermissionList = this.jsonToArray(
+                      JSON.parse(JSON.stringify(this.permissionList))
                   )
-                })
+                  this.$nextTick(() => {
+                    this.resolvePermissionList = this.resolvePermission(
+                        this.permissionList
+                    )
+                  })
+                } else {
+
+                  //表单去除系统管理权限
+                  this.addPermissionList = res.result.filter(item => item.functionID !== 2)
+                  // console.log(`this.addPermissionList ： ${JSON.stringify(this.addPermissionList)}`)
+
+                  //默认选择的权限
+                  this.addFunctionSelect = this.addPermissionList.filter(item => item.systemCode === 1 && item.parentFunctionCode === 0).map(it => {
+                    return it.functionID
+                  })
+
+                  this.$nextTick(() => {
+                    this.addResolvePermissionList = this.resolvePermission(
+                        this.addPermissionList,
+                        false
+                    )
+                  })
+                }
               } else {
-                this.addPermissionList = res.result.filter(item => {
-                  return item.systemCode !== "login"
-                })
-                let funSelect = res.result.filter(item => {
-                  return (
-                    item.systemCode === "all" && item.parentFunctionCode === "0"
-                  )
-                })
-                this.addFunctionSelect = funSelect.map(it => {
-                  return it.functionID
-                })
-                this.$nextTick(() => {
-                  this.addResolvePermissionList = this.resolvePermission(
-                    this.addPermissionList,
-                    false
-                  )
-                })
+                this.choosePermisson(res.result)
+                this.filterSelect()
               }
-            } else {
-              this.choosePermisson(res.result)
-              this.filterSelect()
             }
-          }
-        })
-        .catch(() => {
-          this.spinning = false
-        })
+          })
+          .catch(() => {
+            this.spinning = false
+          })
     },
     // 勾选
     choosePermisson(list) {
       let _this = this
       list.map(item => {
-        if (item.systemCode !== "login") {
-          let childLength = _this.getChildren(item)
-          if (
-            childLength !== (item.children === null ? 0 : item.children.length)
-          ) {
-            this.halfFunctionSelect.push(item.functionID)
-            this.getParentFunctionID(item.parentFunctionCode)
-          } else {
-            this.functionSelect.push(item.functionID)
-          }
-          if (item.children && item.children.length) {
-            _this.choosePermisson(item.children)
-          }
+        let childLength = _this.getChildren(item)
+        if (childLength !== (item.children === null ? 0 : item.children.length)) {
+          this.halfFunctionSelect.push(item.functionID)
+          this.getParentFunctionID(item.parentFunctionCode)
+        } else {
+          this.functionSelect.push(item.functionID)
+        }
+        if (item.children && item.children.length) {
+          _this.choosePermisson(item.children)
         }
       })
     },
@@ -431,10 +442,10 @@ export default {
         for (var i = 0, l = nodes.length; i < l; i++) {
           r.push(nodes[i]) // 取每项数据放入一个新数组
           if (
-            Array.isArray(nodes[i]["children"]) &&
-            nodes[i]["children"].length > 0
+              Array.isArray(nodes[i]["children"]) &&
+              nodes[i]["children"].length > 0
           )
-            // 若存在children则递归调用，把数据拼接到新数组中，并且删除该children
+              // 若存在children则递归调用，把数据拼接到新数组中，并且删除该children
             r = r.concat(_this.jsonToArray(nodes[i]["children"]))
           delete nodes[i]["children"]
         }
@@ -449,7 +460,7 @@ export default {
           title: item.functionName,
           key: item.functionID
         }
-        if (item.parentFunctionCode === "0" && item.systemCode === "all") {
+        if (item.parentFunctionCode === 0 && item.systemCode === 1) {
           obj["disableCheckbox"] = true
         }
         if (notUpdate) {
@@ -485,6 +496,7 @@ export default {
   padding: 16px 0;
   display: flex;
   align-items: flex-start;
+
   /deep/ .ant-spin-nested-loading,
   /deep/ .ant-spin-container {
     display: flex;
@@ -492,67 +504,80 @@ export default {
     width: 100%;
     height: 100%;
   }
+
   ._left,
   ._right {
     height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
   }
+
   ._left {
     width: 250px;
     border-right: 1px solid #e8e8e8;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+
     ._bottom {
       display: flex;
       align-items: center;
       justify-content: center;
+
       ._del {
         margin-left: 20px;
       }
     }
   }
+
   ._right {
     flex: 1;
     box-sizing: border-box;
     padding: 0 10px;
     display: flex;
     flex-direction: column;
+
     ._top,
     ._bottom {
       box-sizing: border-box;
       padding: 0 20px;
     }
+
     ._center {
       flex: 1;
       display: flex;
       align-items: flex-start;
       padding: 12px 20px;
+
       ._label {
         width: 100px;
         line-height: 30px;
       }
+
       .function-check {
         /deep/ .ant-tree > li:first-child {
           padding-top: 4px;
         }
       }
     }
+
     ._top {
       display: flex;
       align-items: center;
       padding: 12px 20px;
       border-bottom: 1px solid #e8e8e8;
+
       ._label {
         width: 100px;
       }
+
       .login-check {
         flex: 1;
         display: flex;
         align-items: center;
       }
     }
+
     ._bottom {
       display: flex;
       justify-content: flex-end;

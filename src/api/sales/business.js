@@ -14,7 +14,7 @@ const Api = {
  */
 export function getSCIInfoList(params) {
   return method(
-    process.env.VUE_APP_API_SALE_URL,
+    process.env.VUE_APP_API_URL,
     false
   )({
     url: Api.getSCIInfoList,
@@ -28,7 +28,7 @@ export function getSCIInfoList(params) {
  */
 export function del(ids) {
   return method(
-    process.env.VUE_APP_API_SALE_URL,
+    process.env.VUE_APP_API_URL,
     false
   )({
     url: Api.Del,
@@ -42,7 +42,7 @@ export function del(ids) {
  */
 export function userSCIInfo(params) {
   return method(
-    process.env.VUE_APP_API_SALE_URL,
+    process.env.VUE_APP_API_URL,
     false
   )({
     url: Api.userSCIInfo,
@@ -57,7 +57,7 @@ export function userSCIInfo(params) {
  */
 export function downLoadAll(params) {
   return method(
-    process.env.VUE_APP_API_SALE_URL,
+    process.env.VUE_APP_API_URL,
     true,
     "file"
   )({

@@ -15,7 +15,7 @@ const Api = {
 
 const get = parameter => {
   return method(
-    process.env.VUE_APP_API_BASE_URL,
+    process.env.VUE_APP_API_URL,
     true
   )({
     url: Api.getXsUserListInfo,
@@ -30,7 +30,7 @@ const get = parameter => {
  */
 export function downLoadAll(params) {
   return method(
-    process.env.VUE_APP_API_BASE_URL,
+    process.env.VUE_APP_API_URL,
     true,
     "file"
   )({

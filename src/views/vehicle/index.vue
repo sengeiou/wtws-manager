@@ -1630,7 +1630,7 @@ export default {
 
     showTpms(tyreNo) {
       window.open(
-        `${process.env.VUE_APP_WEB_URL}/senser/index.html?tyreid=${tyreNo}&`,
+        `${process.env.VUE_APP_API_URL}/senser/index.html?tyreid=${tyreNo}&`,
         "_blank"
       )
     }

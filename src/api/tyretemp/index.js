@@ -15,7 +15,7 @@ const api = {
   getTyreTemplateList: "/tyre/getTyreTemplateList"
 }
 
-let url = process.env.VUE_APP_API_MANAGE_URL
+let url = process.env.VUE_APP_API_URL
 
 /**
  * @param parameter

@@ -1,19 +1,19 @@
-export const setDocumentTitle = function(title) {
-  document.title = title
-  const ua = navigator.userAgent
-  // eslint-disable-next-line
-  const regex = /\bMicroMessenger\/([\d\.]+)/
-  if (regex.test(ua) && /ip(hone|od|ad)/i.test(ua)) {
-    const i = document.createElement("iframe")
-    i.src = "/favicon.ico"
-    i.style.display = "none"
-    i.onload = function() {
-      setTimeout(function() {
-        i.remove()
-      }, 9)
+export const setDocumentTitle = function (title) {
+    document.title = title
+    const ua = navigator.userAgent
+    // eslint-disable-next-line
+    const regex = /\bMicroMessenger\/([\d\.]+)/
+    if (regex.test(ua) && /ip(hone|od|ad)/i.test(ua)) {
+        const i = document.createElement("iframe")
+        i.src = "/favicon.ico"
+        i.style.display = "none"
+        i.onload = function () {
+            setTimeout(function () {
+                i.remove()
+            }, 9)
+        }
+        document.body.appendChild(i)
     }
-    document.body.appendChild(i)
-  }
 }
 
-export const domTitle = "爱轮胎 | 后台管理系统"
+export const domTitle = "川金诺 | 称重后台管理系统"

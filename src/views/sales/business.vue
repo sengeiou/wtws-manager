@@ -497,7 +497,7 @@ export default {
   // 配置crud
   cruds() {
     return CRUD({
-      baseURL: process.env.VUE_APP_API_SALE_URL,
+      baseURL: process.env.VUE_APP_API_URL,
       url: "user/getAdminSCIInfoList",
       title: "商机列表",
       columns: [

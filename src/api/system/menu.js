@@ -1,8 +1,8 @@
 import request from "@/utils/request"
 
 const menuApi = {
-  GetRole: "/user/getRoleFunctionByRoleID",
-  ListRole: "/user/getRoleList"
+    GetRoleFunctions: "/role/functions",
+    ListRole: "/role/all-list"
 }
 
 /**
@@ -11,25 +11,22 @@ const menuApi = {
  * @param parameter
  * @returns {*}
  */
-export function getrole(role_id = "") {
-  let parameter = {
-    roleID: role_id
-  }
-  return request({
-    url: menuApi.GetRole,
-    method: "post",
-    data: parameter
-  })
+export function getrole(data) {
+    return request({
+        url: menuApi.GetRoleFunctions,
+        method: "get",
+        data
+    })
 }
 
 export function listRole() {
-  return request({
-    url: menuApi.ListRole,
-    method: "post"
-  })
+    return request({
+        url: menuApi.ListRole,
+        method: "get"
+    })
 }
 
 export default {
-  getrole,
-  listRole
+    getrole,
+    listRole
 }

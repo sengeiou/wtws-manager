@@ -21,7 +21,7 @@ function CRUD(options) {
     // 标题
     title: "",
     // 请求数据的url
-    baseURL: process.env.VUE_APP_API_BASE_URL,
+    baseURL: process.env.VUE_APP_API_URL,
     url: "",
     // 表格数据
     data: [],

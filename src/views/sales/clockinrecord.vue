@@ -65,7 +65,7 @@ export default {
   // 配置crud
   cruds() {
     return CRUD({
-      baseURL: process.env.VUE_APP_API_SALE_URL,
+      baseURL: process.env.VUE_APP_API_URL,
       url: "checkIn/getAdminLogInfoList",
       title: "打卡详情",
       // 响应数据中必须包含list字段

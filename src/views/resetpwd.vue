@@ -2,128 +2,128 @@
   <div class="resetpwd">
     <div class="_box">
       <div class="_left">
-        <img src="~@/assets/image/login-box-left.png" alt="" srcset="" />
+        <img alt="" src="~@/assets/image/login-box-left.png" srcset=""/>
       </div>
       <div class="_right">
         <div class="_top">
-          <img src="~@/assets/image/logo.png" class="_l" alt="" srcset="" />
+          <img alt="" class="_l" src="~@/assets/image/logo.png" srcset=""/>
           <div class="_r">后台管理系统</div>
         </div>
         <div class="_title">
           修改密码<span>（首次登录必须先修改密码）</span>
         </div>
         <a-form-model
-          ref="ruleForm"
-          class="resetpwd-form"
-          :model="form"
-          :rules="rules"
+            ref="ruleForm"
+            :model="form"
+            :rules="rules"
+            class="resetpwd-form"
         >
           <a-form-model-item ref="username" prop="username">
             <a-input
-              placeholder="用户名/手机号"
-              v-model="form.username"
-              :disabled="true"
-              @blur="
+                v-model="form.username"
+                :disabled="true"
+                allow-clear
+                placeholder="用户名/手机号"
+                @blur="
                 () => {
                   $refs.username.onFieldBlur()
                 }
               "
-              allow-clear
             >
-              <a-icon slot="prefix" type="user" />
+              <a-icon slot="prefix" type="user"/>
             </a-input>
           </a-form-model-item>
           <a-form-model-item ref="oldpassword" prop="oldpassword">
             <a-input
-              placeholder="输入旧密码"
-              type="password"
-              v-model="form.oldpassword"
-              @blur="
+                v-model="form.oldpassword"
+                allow-clear
+                placeholder="输入旧密码"
+                type="password"
+                @blur="
                 () => {
                   $refs.oldpassword.onFieldBlur()
                 }
               "
-              allow-clear
             >
-              <a-icon slot="prefix" type="lock" />
+              <a-icon slot="prefix" type="lock"/>
             </a-input>
           </a-form-model-item>
           <a-form-model-item ref="password" prop="password">
             <a-popover
-              :visible="popoverVisible"
-              overlayClassName="login-form-popover"
-              placement="rightTop"
-              trigger="click"
+                :visible="popoverVisible"
+                overlayClassName="login-form-popover"
+                placement="rightTop"
+                trigger="click"
             >
               <template slot="content">
                 <div>
                   <a-icon
-                    :type="hasSpeace ? 'exclamation-circle' : 'check-circle'"
-                    theme="filled"
-                    :style="{ color: hasSpeace ? '#0B7EF8' : '#52c41a' }"
+                      :style="{ color: hasSpeace ? '#0B7EF8' : '#52c41a' }"
+                      :type="hasSpeace ? 'exclamation-circle' : 'check-circle'"
+                      theme="filled"
                   />
                   <span>不能包含空格</span>
                 </div>
                 <div>
                   <a-icon
-                    :type="trueLength ? 'exclamation-circle' : 'check-circle'"
-                    theme="filled"
-                    :style="{ color: trueLength ? '#0B7EF8' : '#52c41a' }"
+                      :style="{ color: trueLength ? '#0B7EF8' : '#52c41a' }"
+                      :type="trueLength ? 'exclamation-circle' : 'check-circle'"
+                      theme="filled"
                   />
                   <span>长度为6-11个字符</span>
                 </div>
                 <div>
                   <a-icon
-                    :type="hasSpecial ? 'exclamation-circle' : 'check-circle'"
-                    theme="filled"
-                    :style="{ color: hasSpecial ? '#0B7EF8' : '#52c41a' }"
+                      :style="{ color: hasSpecial ? '#0B7EF8' : '#52c41a' }"
+                      :type="hasSpecial ? 'exclamation-circle' : 'check-circle'"
+                      theme="filled"
                   />
-                  <span>由数字和字母组成，<br />不能包含特殊字符</span>
+                  <span>由数字和字母组成，<br/>不能包含特殊字符</span>
                 </div>
               </template>
               <a-input
-                placeholder="输入新密码"
-                type="password"
-                v-model="form.password"
-                @change="passwordChange"
-                @focus="
-                  () => {
-                    popoverVisible = true
-                  }
-                "
-                @blur="
+                  v-model="form.password"
+                  allow-clear
+                  placeholder="输入新密码"
+                  type="password"
+                  @blur="
                   () => {
                     popoverVisible = false
                     $refs.password.onFieldBlur()
                   }
                 "
-                allow-clear
+                  @change="passwordChange"
+                  @focus="
+                  () => {
+                    popoverVisible = true
+                  }
+                "
               >
-                <a-icon slot="prefix" type="lock" />
+                <a-icon slot="prefix" type="lock"/>
               </a-input>
             </a-popover>
           </a-form-model-item>
           <a-form-model-item ref="repassword" prop="repassword">
             <a-input
-              placeholder="再次输入"
-              type="password"
-              v-model="form.repassword"
-              @blur="
+                v-model="form.repassword"
+                allow-clear
+                placeholder="再次输入"
+                type="password"
+                @blur="
                 () => {
                   $refs.repassword.onFieldBlur()
                 }
               "
-              allow-clear
             >
-              <a-icon slot="prefix" type="lock" />
+              <a-icon slot="prefix" type="lock"/>
             </a-input>
           </a-form-model-item>
           <a-form-model-item class="resetpwdwrapper">
             <a-button
-              :loading="loading"
-              class="resetpwd-btn"
-              type="primary"
-              @click="onSubmit"
+                :loading="loading"
+                class="resetpwd-btn"
+                type="primary"
+                @click="onSubmit"
             >
               <span v-if="!loading">提 交</span>
               <span v-else>提 交 中...</span>
@@ -136,7 +136,8 @@
 </template>
 <script>
 import md5 from "js-md5" // 使用md5加密密码
-import { updatepwd } from "@/api/user"
+import {updatepwd} from "@/api/user"
+import {defaultPassWord} from "@/config";
 
 export default {
   data() {
@@ -177,7 +178,7 @@ export default {
       form: {
         username: "",
         password: "",
-        oldpassword: "",
+        oldpassword: defaultPassWord,
         repassword: ""
       },
       hasSpeace: true,
@@ -219,7 +220,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.account = route.query && route.query.account
         this.form.username = this.account
       },
@@ -229,7 +230,7 @@ export default {
   methods: {
     // 密码框修改
     passwordChange(e) {
-      let { value } = e.target
+      let {value} = e.target
       if (value.includes(" ") || value.trim() === "") {
         this.hasSpeace = true
       } else {
@@ -255,19 +256,21 @@ export default {
         if (valid) {
           this.loading = true
           updatepwd({
-            password: md5(this.form.password),
-            oldPassWord: md5(this.form.oldpassword)
+            password: md5(md5(this.form.password) + "wtws"),
+            oldPassWord: md5(md5(this.form.oldpassword) + "wtws")
           })
-            .then(res => {
-              this.loading = false
-              if (res.code === 14) {
-                this.$store.commit("SET_FIRST", false)
-                this.$store.dispatch("LogOut", false)
-              }
-            })
-            .catch(() => {
-              this.loading = false
-            })
+              .then(res => {
+                console.log(`research =====> ${JSON.stringify(res)}`)
+                // this.loading = false
+                if (res.code === 14) {
+                  this.$store.commit("SET_FIRST", false)
+                  // this.$store.dispatch("LogOut", false)
+                  this.$router.push({path: "/dashboard/work" || "/"})
+                }
+              })
+              .catch(() => {
+                this.loading = false
+              })
         } else {
           return false
         }
@@ -286,6 +289,7 @@ export default {
   background: url("~@/assets/image/background.png") no-repeat 50%;
   background-size: cover;
   box-sizing: border-box;
+
   ._box {
     width: 1022px;
     height: 549px;
@@ -294,6 +298,7 @@ export default {
     margin: 0 auto;
     display: flex;
     align-items: center;
+
     ._left {
       img {
         display: block;
@@ -303,18 +308,22 @@ export default {
         margin-right: 97px;
       }
     }
+
     ._right {
       flex: 1;
+
       ._top {
         display: flex;
         align-items: center;
         margin-bottom: 50px;
+
         ._l {
           margin-right: 70px;
           display: block;
-          width: 136px;
-          height: 43px;
+          width: 100px;
+          height: 100px;
         }
+
         ._r {
           font-size: 24px;
           font-family: PingFangSC, PingFangSC-Regular;
@@ -322,6 +331,7 @@ export default {
           text-align: left;
           color: #0b7ef8;
           position: relative;
+
           &::before {
             content: "";
             display: block;
@@ -335,6 +345,7 @@ export default {
           }
         }
       }
+
       ._title {
         font-size: 16px;
         font-family: PingFangSC, PingFangSC-Regular;
@@ -342,20 +353,24 @@ export default {
         text-align: left;
         color: #1890ff;
         margin-bottom: 19px;
+
         span {
           color: #c0c0c0;
         }
       }
+
       .resetpwd-form {
         border-radius: 6px;
         // background: #fff;
         width: 385px;
+
         ._title {
           margin: 0 auto 30px auto;
           text-align: center;
           color: #707070;
           font-weight: bold;
         }
+
         /deep/ .ant-input {
           height: 42px;
           line-height: 41px;
@@ -363,18 +378,22 @@ export default {
           border-left: none;
           border-right: none;
           border-radius: 0;
+
           &:focus {
             outline: none;
             box-shadow: none;
           }
         }
+
         /deep/ .ant-input-prefix,
         /deep/ .ant-checkbox-wrapper {
           color: #c0c0c0;
         }
+
         /deep/ .ant-input-affix-wrapper .ant-input:not(:first-child) {
           padding-left: 37px;
         }
+
         /deep/ .ant-form-item {
           .resetpwd-btn {
             // width: 100%;
@@ -391,6 +410,7 @@ export default {
             font-family: PingFangSC, PingFangSC-Medium;
             font-weight: 500;
           }
+
           &.resetpwdwrapper {
             .ant-form-item-control-wrapper {
               display: flex;

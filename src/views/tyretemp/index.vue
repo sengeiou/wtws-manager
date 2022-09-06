@@ -356,7 +356,7 @@ export default {
         specification: "",
         patternModel: ""
       },
-      baseURL: process.env.VUE_APP_API_MANAGE_URL,
+      baseURL: process.env.VUE_APP_API_URL,
       url: "/tyre/getTyreTemplateList",
       title: "轮胎种类",
       columns: [

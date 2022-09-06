@@ -1,50 +1,51 @@
 <template>
   <a-layout-sider
-    class="own-slider"
-    v-model="collapsed"
-    :style="{
+      v-model="collapsed"
+      :class="navigationmode === 'fixed' ? 'fix-slider' : ''"
+      :collapsedWidth="collapsedWidth"
+      :style="{
       overflow: 'auto',
       'min-height': '100vh',
       position: navigationmode,
       left: 0,
       background: pagestyle === 'dark' ? '#001529' : '#fff'
     }"
-    :class="navigationmode === 'fixed' ? 'fix-slider' : ''"
-    :trigger="null"
-    :collapsedWidth="collapsedWidth"
-    :width="sliderWidth"
-    collapsible
+      :trigger="null"
+      :width="sliderWidth"
+      class="own-slider"
+      collapsible
   >
     <div
-      :class="[pagestyle === 'light' ? 'light' : '']"
-      :style="{ height: height + 'px' }"
-      class="logo"
+        :class="[pagestyle === 'light' ? 'light' : '']"
+        :style="{ height: height + 'px' }"
+        class="logo"
     >
       <router-link to="/">
         <div class="imgbox">
-          <img src="~@/assets/image/logo-index.png" alt="" srcset="" />
+          <img alt="" src="~@/assets/image/logo-index.png" srcset=""/>
         </div>
         <h1
-          v-if="!collapsed"
-          :style="{ color: pagestyle === 'light' ? themecolor : '#fff' }"
+            v-if="!collapsed"
+            :style="{ color: pagestyle === 'light' ? themecolor : '#fff' }"
         >
-          爱轮胎管理后台
+          川金诺称重后台
         </h1>
       </router-link>
     </div>
     <Menu
-      :style="{ height: `calc(100% - ${height}px)` }"
-      :theme="pagestyle"
+        :style="{ height: `calc(100% - ${height}px)` }"
+        :theme="pagestyle"
     ></Menu>
   </a-layout-sider>
 </template>
 <script>
 import Menu from "../Menu"
 import eventBus from "@/bus"
-import { PageSetting } from "@/config"
-import { mapGetters } from "vuex"
+import {PageSetting} from "@/config"
+import {mapGetters} from "vuex"
+
 export default {
-  components: { Menu },
+  components: {Menu},
   data() {
     return {
       collapsed: false,
@@ -74,9 +75,11 @@ export default {
 .own-slider {
   min-height: 100vh;
   overflow-x: hidden !important;
+
   &.fix-slider {
     height: 100vh;
   }
+
   .logo {
     width: 100%;
     height: 64px;
@@ -86,21 +89,26 @@ export default {
     box-sizing: border-box;
     overflow: hidden;
     padding-left: 20px;
+
     /deep/ a {
       width: auto;
       display: flex;
       align-items: center;
     }
+
     .imgbox {
       display: inline-block;
       border-radius: 50%;
+
       img {
         display: inline-block;
         width: 40px;
       }
+
       position: relative;
       transition-duration: 0.5s;
       overflow: hidden;
+
       &::before {
         content: "";
         position: absolute;
@@ -127,12 +135,14 @@ export default {
       vertical-align: middle;
       width: 120px;
     }
+
     &.light {
       border: 1px solid #efefef;
       border-top: none;
       border-left: none;
     }
   }
+
   @-webkit-keyframes searchLights {
     0% {
       left: -100px;
@@ -173,6 +183,7 @@ export default {
       top: 100px;
     }
   }
+
   /deep/ .ant-layout-sider-children {
     .ant-menu {
       overflow-y: auto;

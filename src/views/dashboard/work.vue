@@ -14,15 +14,14 @@
       <!--      <a-button type="primary" class="btn">-->
       <!--        数据大屏 3840*2160-->
       <!--      </a-button>-->
-      <a-button class="btn" type="primary" @click="generateMonthReport()">
-        生成2月份使用明细
-      </a-button>
-      <a-button class="btn" type="primary" @click="generateMonthReport1()">
-        生成1月份使用明细
-      </a-button>
+      <!--      <a-button class="btn" type="primary" @click="generateMonthReport()">-->
+      <!--        生成2月份使用明细-->
+      <!--      </a-button>-->
+      <!--      <a-button class="btn" type="primary" @click="generateMonthReport1()">-->
+      <!--        生成1月份使用明细-->
+      <!--      </a-button>-->
     </div>
     <div class="top-card">
-      <!-- 1 -->
       <a-card class="card card1" hoverable>
         <template slot="title">
           <div class="title">
@@ -90,7 +89,7 @@
               </div>
               <div class="_right">
                 <span
-                  :class="[
+                    :class="[
                     parseFloat(vehicleDataObj.vehiclePercentage) < 0
                       ? 'reduce'
                       : 'add'
@@ -98,9 +97,9 @@
                 >
                   <span></span>
                   <span
-                    >{{
+                  >{{
                       (
-                        parseFloat(vehicleDataObj.vehiclePercentage) * 100
+                          parseFloat(vehicleDataObj.vehiclePercentage) * 100
                       ).toFixed(2)
                     }}%</span
                   >
@@ -132,8 +131,8 @@
               </div>
               <div class="_right">
                 <span>{{
-                  splitNum(enterpriseDataObj.monthSignedEnterpriseCount)
-                }}</span>
+                    splitNum(enterpriseDataObj.monthSignedEnterpriseCount)
+                  }}</span>
                 <span>户</span>
               </div>
             </div>
@@ -143,7 +142,7 @@
               </div>
               <div class="_right">
                 <span
-                  :class="[
+                    :class="[
                     parseFloat(enterpriseDataObj.signedEnterprisePercentage) < 0
                       ? 'reduce'
                       : 'add'
@@ -151,9 +150,9 @@
                 >
                   <span></span>
                   <span
-                    >{{
+                  >{{
                       parseFloat(enterpriseDataObj.signedEnterprisePercentage) *
-                        100
+                      100
                     }}%</span
                   >
                 </span>
@@ -193,7 +192,7 @@
               </div>
               <div class="_right">
                 <span
-                  :class="[
+                    :class="[
                     parseFloat(stationDataObj.stationPercentage) < 0
                       ? 'reduce'
                       : 'add'
@@ -201,9 +200,9 @@
                 >
                   <span></span>
                   <span
-                    >{{
+                  >{{
                       (
-                        parseFloat(stationDataObj.stationPercentage) * 100
+                          parseFloat(stationDataObj.stationPercentage) * 100
                       ).toFixed(2)
                     }}%</span
                   >
@@ -231,10 +230,10 @@
   </div>
 </template>
 <script>
-import { parseTime, splitNum } from "@/utils/utils"
+import {parseTime, splitNum} from "@/utils/utils"
 // import eventBus from "@/bus"
 import Api from "@/api/analysis"
-import { downloadFileByUrl } from "../../utils/utils"
+import {downloadFileByUrl} from "../../utils/utils"
 // import echarts from "echarts"
 export default {
   data() {
@@ -303,24 +302,19 @@ export default {
         signedEnterprisePercentage: 0
       },
       tyreSatatus: {
-        s1: "待装车新胎",
-        s2: "待装车回收胎",
-        s3: "待装车备用胎",
-        s4: "待装车翻新胎",
-        s5: "装车轮胎",
-        s6: "待检胎",
-        s7: "修理中",
-        s8: "翻新中",
-        s9: "已报废"
+        s1: "1",
+        s2: "2",
+        s3: "3",
+        s4: "4",
+        s5: "5",
+        s6: "6",
+        s7: "7",
+        s8: "8",
+        s9: "9"
       }
     }
   },
   mounted() {
-    // let obj = this.genData(8)
-    // this.option.legend.data = obj.legendData
-    // this.option.legend.selected = obj.selected
-    // this.option.series[0].data = obj.seriesData
-    // this.drawChart()
     this.initData()
   },
   methods: {
@@ -393,19 +387,12 @@ export default {
       }
       let obj = data[0]
       let x = [],
-        y = []
+          y = []
       for (const key in obj) {
         if (Object.hasOwnProperty.call(obj, key)) {
           const element = obj[key]
           if (parseInt(element) !== 0) {
             if (key.includes("Count")) {
-              // if (key === "noInstalltyreNumCount") {
-              //   x.push("未装胎数量")
-              //   y.push({
-              //     name: "未装胎数量",
-              //     value: element
-              //   })
-              // } else {
               if (key !== "noInstalltyreNumCount") {
                 const str = key.split("Count")[0]
                 let title = str.charAt(str.length - 1)
@@ -427,31 +414,11 @@ export default {
       myChart.setOption(this.option)
     },
     async generateMonthReport() {
-      // const res = await Api.generateMonthReport()
-      // const blob = new Blob([res], {
-      //   type: "application/vnd.ms-excel;charset=utf-8"
-      // })
-      // var downloadElement = document.createElement("a")
-      // var href = window.URL.createObjectURL(blob) //创建下载的链接
-      // downloadElement.href = href
-      // downloadElement.download = `月度报告${new Date().getTime()}.xls` //下载后文件名
-      // document.body.appendChild(downloadElement)
-      // downloadElement.click() //点击下载
-      // document.body.removeChild(downloadElement) //下载完成移除元素
-      // window.URL.revokeObjectURL(href) //释放掉blob对象
-
       downloadFileByUrl(
-        "http://ksmanage.linkchaindata.com/static-file/a.xls",
-        "2022年2月份西藏玉龙轮胎使用明细.xls"
+          "http://ksmanage.linkchaindata.com/static-file/a.xls",
+          "2022年2月份西藏玉龙轮胎使用明细.xls"
       )
     },
-
-    generateMonthReport1() {
-      downloadFileByUrl(
-        "http://ksmanage.linkchaindata.com/static-file/a_1.xls",
-        "2022年1月份西藏玉龙轮胎使用明细.xls"
-      )
-    }
   }
 }
 </script>

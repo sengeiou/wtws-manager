@@ -15,7 +15,7 @@ const Api = {
   getOperateDetail: "operation/detail",
 }
 
-let url = process.env.VUE_APP_API_MANAGE_V2_URL
+let url = process.env.VUE_APP_API_URL
 
 export function get(params) {
   return method(
